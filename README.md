@@ -11,11 +11,43 @@ This project involves taking a baseline installation of a Linux distribution on 
 * IP address: 18.222.81.58
 * Application URL: [http://ec2-18-222-81-58.us-east-2.compute.amazonaws.com](http://ec2-18-222-81-58.us-east-2.compute.amazonaws.com)
 
+## Dependencies
+
+The packages used to build and run the application on server:
+* Python - `python`
+* Apache - `apache2`
+* Python WSGI adapter module for Apache - `libapache2-mod-wsgi`
+* PostgreSQL - `postgresql`
+* Python module for PostgreSQL - `python-psycopg2`
+* SQLAlchemy - `python-sqlalchemy`
+* Flask - `python-flask`
+* HTTP library for Python - `python-requests`
+* OAuth 2.0 client library - `python-oauth2client`
+
 ## Summary of Configuration Changes
 
 #### 1. Update all currently installed packages:
 * `$ sudo apt-get update`
 * `$ sudo apt-get upgrade`
+* Set automatic updates:
+    - `$ sudo apt install unattended-upgrades`
+    - `$ sudo nano /etc/apt/apt.conf.d/50unattended-upgrades`:
+    ```
+    Unattended-Upgrade::Allowed-Origins {
+            "${distro_id}:${distro_codename}";
+            "${distro_id}:${distro_codename}-security";
+    //      "${distro_id}:${distro_codename}-updates";
+    //      "${distro_id}:${distro_codename}-proposed";
+    //      "${distro_id}:${distro_codename}-backports";
+    };
+    ```
+    - `$ sudo nano /etc/apt/apt.conf.d/20auto-upgrades`:
+    ```
+    APT::Periodic::Update-Package-Lists "1";
+    APT::Periodic::Download-Upgradeable-Packages "1";
+    APT::Periodic::AutocleanInterval "7";
+    APT::Periodic::Unattended-Upgrade "1";
+    ```
 #### 2. Change the SSH port to a non-default one (2200 per project requirements)
 * `$ sudo nano /etc/ssh/sshd_config` and update line `Port 22` to `Port 2200`
 * `$ sudo service ssh restart`
@@ -103,4 +135,4 @@ from app import app as application
 * `$ sudo /etc/init.d/apache2 restart`
 
 ## Resources consulted
-[Ubuntu Packages](https://packages.ubuntu.com/), [Ask Ubuntu](https://askubuntu.com/), [PostgreSQL Docs](https://www.postgresql.org/docs/)
+[Ubuntu Packages](https://packages.ubuntu.com/), [Ask Ubuntu](https://askubuntu.com/), [PostgreSQL Docs](https://www.postgresql.org/docs/), [Automatic Updates](https://help.ubuntu.com/lts/serverguide/automatic-updates.html)
